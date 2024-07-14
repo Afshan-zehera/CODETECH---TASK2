@@ -1,0 +1,151 @@
+#include <iostream>
+#include <vector>
+#include <string>
+
+class Student {
+public:
+    int id;
+    std::string name;
+    std::vector<int> grades;
+
+    Student(int studentId, const std::string& studentName) : id(studentId), name(studentName) {}
+
+    double calculateAverage() const {  // Marking the function as const
+        if (grades.empty()) {
+            return 0;
+        }
+        double sum = 0;
+        for (int grade : grades) {
+            sum += grade;
+        }
+        return sum / grades.size();
+    }
+};
+
+class StudentManagementSystem {
+private:
+    std::vector<Student> students;
+    int nextId;
+
+public:
+    StudentManagementSystem() : nextId(1) {}
+
+    void addStudent(const std::string& name) {
+        students.push_back(Student(nextId++, name));
+        std::cout << "Student added successfully.\n";
+    }
+
+    void editStudent(int id, const std::string& newName) {
+        for (auto& student : students) {
+            if (student.id == id) {
+                student.name = newName;
+                std::cout << "Student information updated successfully.\n";
+                return;
+            }
+        }
+        std::cout << "Student not found.\n";
+    }
+
+    void deleteStudent(int id) {
+        for (auto it = students.begin(); it != students.end(); ++it) {
+            if (it->id == id) {
+                students.erase(it);
+                std::cout << "Student deleted successfully.\n";
+                return;
+            }
+        }
+        std::cout << "Student not found.\n";
+    }
+
+    void addGrade(int id, int grade) {
+        for (auto& student : students) {
+            if (student.id == id) {
+                student.grades.push_back(grade);
+                std::cout << "Grade added successfully.\n";
+                return;
+            }
+        }
+        std::cout << "Student not found.\n";
+    }
+
+    void printStudentInfo(int id) const {  // Marking the function as const
+        for (const auto& student : students) {
+            if (student.id == id) {
+                std::cout << "Student ID: " << student.id << "\n";
+                std::cout << "Student Name: " << student.name << "\n";
+                std::cout << "Grades: ";
+                for (int grade : student.grades) {
+                    std::cout << grade << " ";
+                }
+                std::cout << "\nAverage Grade: " << student.calculateAverage() << "\n";
+                return;
+            }
+        }
+        std::cout << "Student not found.\n";
+    }
+};
+
+int main() {
+    StudentManagementSystem sms;
+
+    int choice, id, grade;
+    std::string name;
+
+    while (true) {
+        std::cout << "\nStudent Management System\n";
+        std::cout << "1. Add Student\n";
+        std::cout << "2. Edit Student\n";
+        std::cout << "3. Delete Student\n";
+        std::cout << "4. Add Grade\n";
+        std::cout << "5. Print Student Info\n";
+        std::cout << "6. Exit\n";
+        std::cout << "Enter your choice: ";
+        std::cin >> choice;
+
+        switch (choice) {
+            case 1:
+                std::cout << "Enter student name: ";
+                std::cin.ignore();
+                std::getline(std::cin, name);
+                sms.addStudent(name);
+                break;
+
+            case 2:
+                std::cout << "Enter student ID to edit: ";
+                std::cin >> id;
+                std::cout << "Enter new student name: ";
+                std::cin.ignore();
+                std::getline(std::cin, name);
+                sms.editStudent(id, name);
+                break;
+
+            case 3:
+                std::cout << "Enter student ID to delete: ";
+                std::cin >> id;
+                sms.deleteStudent(id);
+                break;
+
+            case 4:
+                std::cout << "Enter student ID to add grade: ";
+                std::cin >> id;
+                std::cout << "Enter grade: ";
+                std::cin >> grade;
+                sms.addGrade(id, grade);
+                break;
+
+            case 5:
+                std::cout << "Enter student ID to print info: ";
+                std::cin >> id;
+                sms.printStudentInfo(id);
+                break;
+
+            case 6:
+                return 0;
+
+            default:
+                std::cout << "Invalid choice. Please try again.\n";
+        }
+    }
+
+    return 0;
+}
